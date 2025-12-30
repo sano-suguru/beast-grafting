@@ -1,0 +1,21 @@
+name: 影縫いのミラ
+species: 針鼠
+binder: sano-suguru
+origin: 仕立て屋の廃墟
+lore: |-
+  その仕立て屋は、貴族の依頼で「動く衣」を作ろうとした。
+  失敗した。代わりに、針が生き物になった。
+  今も主人を探して、誰かを縫い付けようとしている。
+traits:
+  - 体中から針が生えている。触れるものを貫く
+  - 影に潜み、光を嫌う
+  - 小さいが、群れで現れることもある
+skills:
+  - name: 縫い止め
+    description: 相手の影を地面に縫い付け、動きを封じる
+  - name: 千針衣
+    description: 全身の針を飛ばして攻撃する。使うと丸裸になる
+status: alive
+arena: local
+wins: 0
+losses: 0
