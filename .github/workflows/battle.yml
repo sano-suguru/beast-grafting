@@ -44,7 +44,7 @@ jobs:
       - name: Run first battle
         if: steps.beast.outputs.file != ''
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MODELS_TOKEN }}
           NEW_BEAST_FILE: ${{ steps.beast.outputs.file }}
         run: |
           npx tsx src/workflows/battle-cli.ts --first-battle "$NEW_BEAST_FILE"

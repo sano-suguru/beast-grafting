@@ -41,6 +41,10 @@ GitHub Issue で魔獣を登録し、AI が闘技場でバトル描写を生成�
 - front matter 付き Markdown は `gray-matter` で読み書き
 - テストは `tests/` に配置、Vitest で実行
 
+## ターミナル操作ルール
+
+- **gh CLI** — `GH_PAGER='' gh ...` の形式で実行する。PAGER を無効化しないと出力をキャプチャできない
+
 ## ファイル操作ルール
 
 **コマンドを優先すべきファイル**（直接編集しない）:
