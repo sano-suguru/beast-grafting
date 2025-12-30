@@ -52,7 +52,7 @@ jobs:
       - name: Generate beast YAML
         id: generate
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MODELS_TOKEN }}
           BEAST_NAME: ${{ steps.parse.outputs.name }}
           BEAST_SPECIES: ${{ steps.parse.outputs.species }}
           BEAST_ORIGIN: ${{ steps.parse.outputs.origin }}
