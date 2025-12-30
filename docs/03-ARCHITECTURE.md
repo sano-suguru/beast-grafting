@@ -79,8 +79,7 @@ AIプロンプトは `src/prompts/*.md` で管理。
 ```
 src/prompts/
   generate-beast.md    # 魔獣自動生成
-  battle.md            # バトル描写生成
-  judgement.md         # 観客の審判
+  battle.md            # バトル描写生成（死亡判定含む）
 ```
 
 ## GitHub Actions構成
@@ -92,7 +91,7 @@ src/prompts/
 # .github/workflows/battle.yml
 # PR merge → 初陣バトル実行
 
-# .github/workflows/daily.yml
+# .github/workflows/arena.yml
 # cron(21:00 JST) → 定期興行
 ```
 
