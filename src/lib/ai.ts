@@ -1,4 +1,4 @@
-import { createOpenAI, type OpenAIProvider } from "@ai-sdk/openai";
+import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { err, ok, type Result } from "neverthrow";
 import type { AppError } from "./errors.js";
 
@@ -6,7 +6,10 @@ import type { AppError } from "./errors.js";
  * GitHub Models経由でAIクライアントを作成
  * 将来Azure OpenAIに移行する場合はこのファイルのみ変更
  */
-export function createAIClient(): Result<OpenAIProvider, AppError> {
+export function createAIClient(): Result<
+	ReturnType<typeof createOpenAICompatible>,
+	AppError
+> {
 	const apiKey = process.env.GITHUB_TOKEN;
 	if (!apiKey) {
 		return err({
@@ -16,10 +19,10 @@ export function createAIClient(): Result<OpenAIProvider, AppError> {
 	}
 
 	return ok(
-		createOpenAI({
+		createOpenAICompatible({
+			name: "github-models",
 			baseURL: "https://models.inference.ai.azure.com",
 			apiKey,
-			compatibility: "compatible", // GitHub Models は /chat/completions を使用
 		}),
 	);
 }

@@ -23,6 +23,7 @@
 	"type": "module",
 	"dependencies": {
 		"@ai-sdk/openai": "^3.0.1",
+		"@ai-sdk/openai-compatible": "^2.0.1",
 		"ai": "^6.0.3",
 		"gray-matter": "^4.0.3",
 		"neverthrow": "^8.2.0",
