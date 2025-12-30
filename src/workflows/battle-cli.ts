@@ -47,6 +47,11 @@ async function handleFirstBattle(beastFile: string): Promise<void> {
 
 	if (result.isErr()) {
 		console.error(`初陣失敗: ${result.error.message}`);
+		if (result.error.details) {
+			for (const d of result.error.details) {
+				console.error(`  - ${d}`);
+			}
+		}
 		process.exit(1);
 	}
 

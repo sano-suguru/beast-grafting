@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { generateText } from "ai";
-import { err, ok, type Result } from "neverthrow";
+import { err, ok, ResultAsync, type Result } from "neverthrow";
 import {
 	type AppError,
 	aiGenerationError,
@@ -87,10 +87,21 @@ export async function executeBattle(
 		beast_b: beastB,
 	});
 
-	const { text } = await generateText({
-		model: ai(DEFAULT_MODEL),
-		prompt,
-	});
+	const textResult = await ResultAsync.fromPromise(
+		generateText({
+			model: ai(DEFAULT_MODEL),
+			prompt,
+		}),
+		(error): AppError =>
+			aiGenerationError(
+				error instanceof Error ? error.message : "Unknown error during AI call",
+			),
+	);
+
+	if (textResult.isErr()) {
+		return err(textResult.error);
+	}
+	const text = textResult.value.text;
 
 	// JSONを抽出してパース
 	const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/);
