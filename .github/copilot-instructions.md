@@ -41,6 +41,13 @@ GitHub Issue で魔獣を登録し、AI が闘技場でバトル描写を生成�
 - front matter 付き Markdown は `gray-matter` で読み書き
 - テストは `tests/` に配置、Vitest で実行
 
+### エラーハンドリング
+
+- **try-catch/throw 禁止** — ESLint ルール `no-restricted-syntax` で禁止済み
+- **neverthrow を使用** — すべてのエラーは `Result` / `ResultAsync` 型で表現する
+- **外部コードのラップ** — 例外を投げる外部ライブラリは `Result.fromThrowable()` または `ResultAsync.fromPromise()` でラップする
+- **エラー伝播** — `result.isErr()` でチェックし、早期リターンで伝播する
+
 ## ターミナル操作ルール
 
 - **gh CLI** — `GH_PAGER='' gh ...` の形式で実行する。PAGER を無効化しないと出力をキャプチャできない
