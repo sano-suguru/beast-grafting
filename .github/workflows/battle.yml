@@ -30,6 +30,8 @@ jobs:
         id: beast
         run: |
           # PRで追加された新しい魔獣ファイルを取得
+          # 日本語ファイル名対応: core.quotepath を無効化
+          git config core.quotepath false
           NEW_BEAST=$(git diff --name-only HEAD~1 HEAD -- 'beasts/*.yml' | head -1)
           if [ -z "$NEW_BEAST" ]; then
             echo "No new beast found"
