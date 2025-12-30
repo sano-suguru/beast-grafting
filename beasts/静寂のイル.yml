@@ -1,0 +1,21 @@
+name: 静寂のイル
+species: 骸骨鳥
+binder: sano-suguru
+origin: 王都近郊の処刑場跡
+lore: |-
+  処刑場に巣を作った鳥がいた。
+  罪人の最期の言葉を聞き続けるうち、その鳥は静寂を纏うようになった。
+  今では鳴くこともない。ただ、見つめるだけ。
+traits:
+  - 羽音を立てない。近づくまで気配がない
+  - 眼窩に光はなく、何を見ているのか分からない
+  - 生者よりも死者に近い存在
+skills:
+  - name: 静寂の囀り
+    description: 聞いた者の動きを一瞬鈍らせる。音のない歌
+  - name: 忘却の翼
+    description: 羽ばたくと記憶がぼやける。技の名を思い出せなくなる
+status: alive
+arena: local
+wins: 0
+losses: 0
