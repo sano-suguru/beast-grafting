@@ -68,7 +68,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           BEAST_NAME="${{ steps.parse.outputs.name }}"
-          BRANCH="beast/${BEAST_NAME// /-}"
+          ISSUE_NUMBER="${{ github.event.issue.number }}"
+          BRANCH="beast/issue-${ISSUE_NUMBER}"
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -80,7 +81,7 @@ jobs:
 
           gh pr create \
             --title "新魔獣「${BEAST_NAME}」登録" \
-            --body "Issue #${{ github.event.issue.number }} からの登録\n\n獣使い: @${{ github.event.issue.user.login }}" \
+            --body "Issue #${ISSUE_NUMBER} からの登録\n\n獣使い: @${{ github.event.issue.user.login }}" \
             --base main \
             --head "$BRANCH"
 
