@@ -131,7 +131,7 @@ export async function executeBattle(
 		],
 		victor: winner.name,
 		death: result.death,
-		deceased: result.deceased ?? undefined,
+		...(result.deceased ? { deceased: result.deceased } : {}),
 	};
 
 	const logFilename = generateBattleLogFilename(now, beastA.name, beastB.name);
