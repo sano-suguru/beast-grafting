@@ -35,3 +35,4 @@ export {
 	saveBinder,
 	writeYaml,
 } from "./yaml.js";
+export { fillTemplate, loadPrompt } from "./prompt.js";

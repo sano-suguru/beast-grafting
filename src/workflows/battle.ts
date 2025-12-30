@@ -1,6 +1,4 @@
-import { readFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import { generateText } from "ai";
 import { err, ok, type Result } from "neverthrow";
 import {
@@ -8,17 +6,17 @@ import {
 	aiGenerationError,
 	createAIClient,
 	DEFAULT_MODEL,
+	fillTemplate,
 	formatBattleLog,
 	generateBattleLogFilename,
 	getArenaByWins,
 	loadAllBeasts,
+	loadPrompt,
 	writeMarkdownWithFrontMatter,
 	writeYaml,
 } from "../lib/index.js";
 import type { BattleLog, Beast } from "../schemas/index.js";
 import { processDeath } from "./death.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /**
  * バトル結果
@@ -30,46 +28,6 @@ export interface BattleResult {
 	loser: Beast;
 	death: boolean;
 	deceased: string | null;
-}
-
-/**
- * プロンプトを読み込む
- */
-async function loadPrompt(name: string): Promise<string> {
-	const promptPath = join(__dirname, "..", "prompts", `${name}.md`);
-	return readFile(promptPath, "utf-8");
-}
-
-/**
- * テンプレート変数を置換
- */
-function fillTemplate(template: string, vars: Record<string, unknown>): string {
-	let result = template;
-
-	function replacePlaceholders(
-		obj: Record<string, unknown>,
-		prefix = "",
-	): void {
-		for (const [key, value] of Object.entries(obj)) {
-			const fullKey = prefix ? `${prefix}.${key}` : key;
-			if (
-				typeof value === "object" &&
-				value !== null &&
-				!Array.isArray(value)
-			) {
-				replacePlaceholders(value as Record<string, unknown>, fullKey);
-			} else {
-				const placeholder = `{{${fullKey}}}`;
-				const stringValue = Array.isArray(value)
-					? JSON.stringify(value, null, 2)
-					: String(value ?? "");
-				result = result.replaceAll(placeholder, stringValue);
-			}
-		}
-	}
-
-	replacePlaceholders(vars);
-	return result;
 }
 
 /**

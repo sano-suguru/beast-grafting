@@ -1,6 +1,4 @@
-import { readFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import { generateText } from "ai";
 import { err, ok, type Result } from "neverthrow";
 import { parse as parseYaml } from "yaml";
@@ -10,7 +8,9 @@ import {
 	binderHasBeastError,
 	createAIClient,
 	DEFAULT_MODEL,
+	fillTemplate,
 	loadBinder,
+	loadPrompt,
 	saveBinder,
 	validateBeastInput,
 	writeYaml,
@@ -21,32 +21,6 @@ import {
 	BeastSchema,
 	BinderSchema,
 } from "../schemas/index.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-/**
- * プロンプトテンプレートを読み込む
- */
-async function loadPrompt(name: string): Promise<string> {
-	const promptPath = join(__dirname, "..", "prompts", `${name}.md`);
-	return readFile(promptPath, "utf-8");
-}
-
-/**
- * テンプレート変数を置換
- */
-function fillTemplate(template: string, vars: Record<string, unknown>): string {
-	let result = template;
-	for (const [key, value] of Object.entries(vars)) {
-		const placeholder = `{{${key}}}`;
-		const stringValue =
-			typeof value === "object"
-				? JSON.stringify(value, null, 2)
-				: String(value ?? "");
-		result = result.replaceAll(placeholder, stringValue);
-	}
-	return result;
-}
 
 /**
  * 魔獣登録処理
