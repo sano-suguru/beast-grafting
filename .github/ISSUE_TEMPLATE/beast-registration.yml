@@ -1,0 +1,62 @@
+name: 魔獣登録
+description: 新しい魔獣を闘技場に登録する
+title: "[魔獣登録] "
+labels: ["beast-registration"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 魔獣登録フォーム
+        新たな魔獣を闘技場へ送り出せ。名前と種族のみ必須。他は空欄ならAIが生成する。
+
+  - type: input
+    id: name
+    attributes:
+      label: Name
+      description: 魔獣の名前
+      placeholder: "喰尾のグリム"
+    validations:
+      required: true
+
+  - type: input
+    id: species
+    attributes:
+      label: Species
+      description: 種族
+      placeholder: "屍食い鬣犬"
+    validations:
+      required: true
+
+  - type: textarea
+    id: origin
+    attributes:
+      label: Origin
+      description: 出自・捕獲地（空欄ならAI生成）
+      placeholder: "東部戦線跡地にて捕獲"
+
+  - type: textarea
+    id: lore
+    attributes:
+      label: Lore
+      description: 来歴・物語（空欄ならAI生成）
+      placeholder: |
+        大飢饉の年、東部戦線に打ち捨てられた兵の屍が丘を成した。
+        その丘に棲む鬣犬の群れは、やがて一匹を残して全て死に絶えた。
+
+  - type: textarea
+    id: traits
+    attributes:
+      label: Traits
+      description: 特徴（1行1つ、空欄ならAI生成）
+      placeholder: |
+        腐肉を喰らい続けた不死の飢え
+        鈍重だが、顎の力は鉄をも噛み砕く
+
+  - type: textarea
+    id: skills
+    attributes:
+      label: Skills
+      description: "技（名前: 説明 の形式、空欄ならAI生成）"
+      placeholder: |
+        死臭の息: 腐敗の瘴気を吐く。浴びた者の傷口から壊死が広がる
+        群れの記憶: 死した群れの幻影が現れ、獲物を囲い込む

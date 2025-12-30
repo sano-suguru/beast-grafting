@@ -1,0 +1,91 @@
+name: 魔獣登録
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  register:
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.labels.*.name, 'beast-registration')
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - run: npm ci
+
+      - name: Parse issue form
+        id: parse
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.issue.body;
+            const lines = body.split('\n');
+            const data = {};
+            let currentField = null;
+
+            for (const line of lines) {
+              if (line.startsWith('### ')) {
+                currentField = line.replace('### ', '').trim().toLowerCase();
+                data[currentField] = '';
+              } else if (currentField && line.trim()) {
+                data[currentField] += (data[currentField] ? '\n' : '') + line.trim();
+              }
+            }
+
+            core.setOutput('name', data['name'] || '');
+            core.setOutput('species', data['species'] || '');
+            core.setOutput('origin', data['origin'] || '');
+            core.setOutput('lore', data['lore'] || '');
+            core.setOutput('traits', data['traits'] || '');
+            core.setOutput('skills', data['skills'] || '');
+
+      - name: Generate beast YAML
+        id: generate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BEAST_NAME: ${{ steps.parse.outputs.name }}
+          BEAST_SPECIES: ${{ steps.parse.outputs.species }}
+          BEAST_ORIGIN: ${{ steps.parse.outputs.origin }}
+          BEAST_LORE: ${{ steps.parse.outputs.lore }}
+          BEAST_TRAITS: ${{ steps.parse.outputs.traits }}
+          BEAST_SKILLS: ${{ steps.parse.outputs.skills }}
+          BINDER: ${{ github.event.issue.user.login }}
+        run: |
+          npx tsx src/workflows/register.ts
+
+      - name: Create PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BEAST_NAME="${{ steps.parse.outputs.name }}"
+          BRANCH="beast/${BEAST_NAME// /-}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git checkout -b "$BRANCH"
+          git add beasts/
+          git commit -m "feat: 新魔獣「${BEAST_NAME}」を登録"
+          git push origin "$BRANCH"
+
+          gh pr create \
+            --title "🐺 新魔獣「${BEAST_NAME}」" \
+            --body "Issue #${{ github.event.issue.number }} からの登録\n\n獣使い: @${{ github.event.issue.user.login }}" \
+            --base main \
+            --head "$BRANCH"
+
+      - name: Close issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue close ${{ github.event.issue.number }} --comment "魔獣登録のPRを作成しました。マージ後、初陣が始まります。"
