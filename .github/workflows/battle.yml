@@ -1,8 +1,9 @@
 name: 初陣バトル
 
 on:
-  pull_request:
-    types: [closed]
+  push:
+    branches:
+      - main
     paths:
       - "beasts/*.yml"
 
@@ -12,12 +13,10 @@ permissions:
 jobs:
   battle:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
-          fetch-depth: 0
+          fetch-depth: 2
 
       - uses: actions/setup-node@v4
         with:
