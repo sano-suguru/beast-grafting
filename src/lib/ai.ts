@@ -19,6 +19,7 @@ export function createAIClient(): Result<OpenAIProvider, AppError> {
 		createOpenAI({
 			baseURL: "https://models.inference.ai.azure.com",
 			apiKey,
+			compatibility: "compatible", // GitHub Models は /chat/completions を使用
 		}),
 	);
 }
