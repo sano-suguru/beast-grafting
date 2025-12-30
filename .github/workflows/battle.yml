@@ -45,7 +45,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NEW_BEAST_FILE: ${{ steps.beast.outputs.file }}
         run: |
-          npx tsx src/workflows/battle.ts --first-battle "$NEW_BEAST_FILE"
+          npx tsx src/workflows/battle-cli.ts --first-battle "$NEW_BEAST_FILE"
 
       - name: Commit battle results
         if: steps.beast.outputs.file != ''

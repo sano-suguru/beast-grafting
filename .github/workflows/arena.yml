@@ -33,7 +33,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npx tsx src/workflows/battle.ts --arena
+          npx tsx src/workflows/battle-cli.ts --arena
 
       - name: Commit results
         if: steps.count.outputs.count >= 2

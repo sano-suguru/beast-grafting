@@ -61,7 +61,7 @@ jobs:
           BEAST_SKILLS: ${{ steps.parse.outputs.skills }}
           BINDER: ${{ github.event.issue.user.login }}
         run: |
-          npx tsx src/workflows/register.ts
+          npx tsx src/workflows/register-cli.ts
 
       - name: Create PR
         env:

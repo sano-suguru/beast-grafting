@@ -214,6 +214,53 @@ export async function executeBattle(
 }
 
 /**
+ * 初陣バトル：新規魔獣の最初の戦い
+ */
+export async function runFirstBattle(
+	newBeastFile: string,
+	beastsDir: string,
+	bindersDir: string,
+	battleLogsDir: string,
+	graveyardDir: string,
+): Promise<Result<BattleResult | null, AppError>> {
+	const { readFile } = await import("node:fs/promises");
+	const { parse: parseYaml } = await import("yaml");
+	const { BeastSchema } = await import("../schemas/index.js");
+
+	// 新規魔獣を読み込み
+	const content = await readFile(newBeastFile, "utf-8");
+	const newBeast = BeastSchema.parse(parseYaml(content));
+
+	// 他の魔獣を取得（同階級優先）
+	const allBeasts = await loadAllBeasts(beastsDir);
+	const opponents = allBeasts.filter(
+		(b) => b.name !== newBeast.name && b.status === "alive",
+	);
+
+	if (opponents.length === 0) {
+		return ok(null); // 対戦相手なし
+	}
+
+	// 同階級の相手を優先、いなければランダム
+	const sameArena = opponents.filter((b) => b.arena === newBeast.arena);
+	const pool = sameArena.length > 0 ? sameArena : opponents;
+	const opponent = pool[Math.floor(Math.random() * pool.length)];
+
+	if (!opponent) {
+		return ok(null);
+	}
+
+	return executeBattle(
+		newBeast,
+		opponent,
+		beastsDir,
+		bindersDir,
+		battleLogsDir,
+		graveyardDir,
+	);
+}
+
+/**
  * 定期興行：全マッチングを実行
  */
 export async function runDailyBattles(
