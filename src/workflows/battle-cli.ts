@@ -3,8 +3,10 @@
  * バトルCLI
  * GitHub Actionsから呼び出される
  */
+import { execSync } from "node:child_process";
 import { join } from "node:path";
 import { updateRanking } from "../lib/index.js";
+import type { BattleResult } from "./battle.js";
 import { runDailyBattles, runFirstBattle } from "./battle.js";
 
 const BEASTS_DIR = join(process.cwd(), "beasts");
@@ -65,6 +67,46 @@ async function handleFirstBattle(beastFile: string): Promise<void> {
 	console.log(`敗者: ${loser.name}`);
 	if (death && deceased) {
 		console.log(`死亡: ${deceased}`);
+	}
+
+	// PRに結果を通知
+	await notifyBattleResult(result.value);
+}
+
+/**
+ * バトル結果をPRにコメントとして通知
+ */
+async function notifyBattleResult(result: BattleResult): Promise<void> {
+	const { winner, loser, death, deceased } = result;
+
+	// 勝者への通知
+	if (winner.pr_number) {
+		const winnerMessage = "砂が血を吸った。立っているのは貴様の獣だ。";
+		commentOnPR(winner.pr_number, winnerMessage);
+	}
+
+	// 敗者への通知
+	if (loser.pr_number) {
+		const loserMessage =
+			death && deceased === loser.name
+				? "灰の婆が死体を引きずっていく。獣は終わった。"
+				: "観客の親指が上を向いた。今日は死なない。";
+		commentOnPR(loser.pr_number, loserMessage);
+	}
+}
+
+/**
+ * PRにコメントを投稿
+ */
+function commentOnPR(prNumber: number, message: string): void {
+	const result = execSync(
+		`gh pr comment ${prNumber} --body "${message}" 2>&1 || echo "FAILED"`,
+		{ encoding: "utf-8" },
+	);
+	if (result.includes("FAILED")) {
+		console.error(`PR #${prNumber} へのコメント投稿に失敗`);
+	} else {
+		console.log(`PR #${prNumber} にコメントを投稿しました`);
 	}
 }
 

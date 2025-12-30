@@ -86,12 +86,29 @@ jobs:
           git commit -m "feat: 新魔獣「${BEAST_NAME}」を登録"
           git push origin "$BRANCH"
 
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+
           PR_URL=$(gh pr create \
             --title "新魔獣「${BEAST_NAME}」登録" \
             --body "Issue #${ISSUE_NUMBER} からの登録\n\n獣使い: @${{ github.event.issue.user.login }}" \
             --base main \
             --head "$BRANCH")
           echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+
+          # PR番号を抽出してYAMLに書き込む
+          PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+
+      - name: Add PR number to beast YAML
+        run: |
+          BEAST_NAME="${{ steps.parse.outputs.name }}"
+          BEAST_FILE=$(find beasts -name "*.yml" -newer .git/index | head -1)
+          if [ -n "$BEAST_FILE" ]; then
+            echo "pr_number: ${{ steps.create-pr.outputs.pr_number }}" >> "$BEAST_FILE"
+            git add "$BEAST_FILE"
+            git commit --amend --no-edit
+            git push origin "${{ steps.create-pr.outputs.branch }}" --force
+          fi
 
       - name: Close issue
         env:

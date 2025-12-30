@@ -49,6 +49,7 @@ export const BeastSchema = z.object({
 	arena: z.enum(["local", "central", "grand"]).default("local"),
 	wins: z.number().int().min(0).default(0),
 	losses: z.number().int().min(0).default(0),
+	pr_number: z.number().int().optional(),
 
 	// --- 拡張ポイント（MVP外、スキーマのみ定義） ---
 	materials: z.array(MaterialSchema).optional(),
