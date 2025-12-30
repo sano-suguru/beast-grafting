@@ -14,6 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     if: contains(github.event.issue.labels.*.name, 'beast-registration')
     steps:
+      - name: Notify processing started
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment ${{ github.event.issue.number }} --body "獣の名が書庫に刻まれた。審査が始まる。"
+
       - uses: actions/checkout@v6
 
       - uses: actions/setup-node@v6
@@ -64,6 +70,7 @@ jobs:
           npx tsx src/workflows/register-cli.ts
 
       - name: Create PR
+        id: create-pr
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -79,14 +86,15 @@ jobs:
           git commit -m "feat: 新魔獣「${BEAST_NAME}」を登録"
           git push origin "$BRANCH"
 
-          gh pr create \
+          PR_URL=$(gh pr create \
             --title "新魔獣「${BEAST_NAME}」登録" \
             --body "Issue #${ISSUE_NUMBER} からの登録\n\n獣使い: @${{ github.event.issue.user.login }}" \
             --base main \
-            --head "$BRANCH"
+            --head "$BRANCH")
+          echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
 
       - name: Close issue
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh issue close ${{ github.event.issue.number }} --comment "魔獣登録のPRを作成しました。マージ後、初陣が始まります。"
+          gh issue close ${{ github.event.issue.number }} --comment "審査を終えた。門が開かれるのを待て。 → ${{ steps.create-pr.outputs.pr_url }}"
