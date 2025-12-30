@@ -31,7 +31,7 @@ jobs:
           output-file: ./sbom.spdx.json
 
       - name: Upload SBOM to GitHub
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: sbom
           path: ./sbom.spdx.json
