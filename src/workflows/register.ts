@@ -23,6 +23,13 @@ import {
 } from "../schemas/index.js";
 
 /**
+ * GitHub Issue Formの未入力値を空として扱う
+ */
+function isEmptyResponse(value: string | undefined | null): boolean {
+	return !value || value === "_No response_";
+}
+
+/**
  * 魔獣登録処理
  * 1. 入力バリデーション
  * 2. 空欄フィールドをAIで自動生成
@@ -47,12 +54,17 @@ export async function registerBeast(
 		return err(binderHasBeastError(validatedInput.binder, binder.active_beast));
 	}
 
+	// traitsから_No response_を除去
+	const cleanedTraits = validatedInput.traits?.filter(
+		(t) => !isEmptyResponse(t),
+	);
+
 	// 空欄フィールドがあればAIで補完
 	let completedInput = validatedInput;
 	if (
-		!validatedInput.origin ||
-		!validatedInput.lore ||
-		!validatedInput.traits?.length ||
+		isEmptyResponse(validatedInput.origin) ||
+		isEmptyResponse(validatedInput.lore) ||
+		!cleanedTraits?.length ||
 		!validatedInput.skills?.length
 	) {
 		const generatedResult = await generateBeastFields(validatedInput);
@@ -119,11 +131,14 @@ async function generateBeastFields(
 
 	const generated = parseYaml(yamlMatch[1]) as BeastInput;
 
+	// _No response_を除去したtraits
+	const inputTraits = input.traits?.filter((t) => !isEmptyResponse(t));
+
 	return ok({
 		...input,
-		origin: input.origin || generated.origin,
-		lore: input.lore || generated.lore,
-		traits: input.traits?.length ? input.traits : generated.traits,
+		origin: isEmptyResponse(input.origin) ? generated.origin : input.origin,
+		lore: isEmptyResponse(input.lore) ? generated.lore : input.lore,
+		traits: inputTraits?.length ? inputTraits : generated.traits,
 		skills: input.skills?.length ? input.skills : generated.skills,
 	});
 }
