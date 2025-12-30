@@ -79,7 +79,7 @@ jobs:
           git push origin "$BRANCH"
 
           gh pr create \
-            --title "🐺 新魔獣「${BEAST_NAME}」" \
+            --title "新魔獣「${BEAST_NAME}」登録" \
             --body "Issue #${{ github.event.issue.number }} からの登録\n\n獣使い: @${{ github.event.issue.user.login }}" \
             --base main \
             --head "$BRANCH"
