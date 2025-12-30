@@ -10,8 +10,8 @@
 		"build": "tsc",
 		"test:run": "vitest run",
 		"typecheck": "tsc --noEmit",
-		"lint": "eslint src tests scripts",
-		"lint:fix": "eslint src tests scripts --fix",
+		"lint": "eslint src tests",
+		"lint:fix": "eslint src tests --fix",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
 		"prepare": "husky"
