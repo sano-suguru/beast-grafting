@@ -1,0 +1,16 @@
+name: 大牙のヘルカイト
+species: 蛇竜族
+binder: sano-suguru
+origin: _No response_
+lore: _No response_
+traits:
+  - _No response_
+skills:
+  - name: 闇の震動
+    description: 自らの体を激しく震わせ、地中に音波を走らせる。この波動は相手の感覚を狂わせ、次の攻撃を的確に命中させる布石となる。
+  - name: 死神の牙
+    description: 巨大な牙に毒を秘めており、一度でも噛み付けば、毒が体内を巡り急激に衰弱させる。毒の致死性は高いが、短命なため即死には至らない。
+status: alive
+arena: local
+wins: 0
+losses: 0
