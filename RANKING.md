@@ -20,9 +20,9 @@ _該当なし_
 | 腐敗の苗床 | sano-suguru | 0勝0敗 |
 | 血煙のカーラ | sano-suguru | 0勝0敗 |
 | 鉄喰いのザラ | sano-suguru | 0勝0敗 |
+| 鉄爪のガルム | sano-suguru | 0勝0敗 |
 | 霧喰いのバルザ | sano-suguru | 0勝0敗 |
 | 静寂のイル | sano-suguru | 0勝0敗 |
-| 骨唄いのヨルン | sano-suguru | 0勝0敗 |
 
 ---
 
@@ -37,4 +37,5 @@ _該当なし_
 | 魔獣 | 獣使い | 戦績 |
 | --- | --- | --- |
 | 影縫いのミラ | sano-suguru | 0勝1敗 |
+| 骨唄いのヨルン | sano-suguru | 0勝1敗 |
 
