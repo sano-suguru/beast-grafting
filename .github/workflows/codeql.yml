@@ -3,8 +3,20 @@ name: CodeQL
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - "beasts/**"
+      - "binders/**"
+      - "battle_logs/**"
+      - "graveyard/**"
+      - "RANKING.md"
   pull_request:
     branches: [main]
+    paths-ignore:
+      - "beasts/**"
+      - "binders/**"
+      - "battle_logs/**"
+      - "graveyard/**"
+      - "RANKING.md"
   schedule:
     - cron: "0 6 * * 1" # 毎週月曜 15:00 JST
 

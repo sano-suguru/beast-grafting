@@ -3,8 +3,20 @@ name: CI
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - "beasts/**"
+      - "binders/**"
+      - "battle_logs/**"
+      - "graveyard/**"
+      - "RANKING.md"
   pull_request:
     branches: [main]
+    paths-ignore:
+      - "beasts/**"
+      - "binders/**"
+      - "battle_logs/**"
+      - "graveyard/**"
+      - "RANKING.md"
 
 jobs:
   check:
