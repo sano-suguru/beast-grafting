@@ -292,17 +292,20 @@ beasts/           # 現役魔獣（YAML）
 graveyard/        # 死亡魔獣の墓碑（Markdown）
 binders/          # 獣使いデータ（YAML）
 battle_logs/      # 戦闘記録（Markdown）
-tales/            # ユーザー投稿物語（Markdown）
-lore/             # 世界観設定
+# tales/          # ユーザー投稿物語（Markdown）※肉スコープ
 RANKING.md        # ランキング（自動生成）
+src/prompts/
+  world.md        # 共通世界観（AI生成時に自動挿入）
+  generate-beast.md
+  battle.md
 .github/
   ISSUE_TEMPLATE/
-    beast.yml     # 魔獣登録フォーム
-    tale.yml      # Tale投稿フォーム
+    beast-registration.yml  # 魔獣登録フォーム
+    # tale.yml              # Tale投稿フォーム ※肉スコープ
   workflows/
     register.yml  # Issue→PR変換
-    battle.yml    # バトル実行
-    daily.yml     # 定期興行
+    battle.yml    # 初陣バトル実行
+    arena.yml     # 定期興行（21:00 JST）
 ```
 
 ## ルール
