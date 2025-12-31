@@ -1,0 +1,19 @@
+name: 鉄鎖の亡者
+species: 縛霊
+binder: sano-suguru
+origin: 王都の地下牢にて捕縛
+lore: かつて反乱を企てた傭兵団の頭目。処刑の後も魂は鉄鎖に縛られ、地下牢を彷徨い続けた。獄吏が次々と狂死したため、獣使いが呼ばれた。
+traits:
+  - 錆びた鉄鎖が四肢に絡みつく
+  - 触れた者の動きを鈍らせる冷気
+  - 怨嗟の声が周囲に響く
+skills:
+  - name: 縛鎖
+    description: 鉄鎖を伸ばし、獲物の四肢を拘束する
+  - name: 怨嗟の霧
+    description: 周囲に冷たい霧を纏い、敵の判断を鈍らせる
+status: alive
+arena: local
+wins: 0
+losses: 0
+pr_number: 38
