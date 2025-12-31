@@ -14,13 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     if: contains(github.event.issue.labels.*.name, 'beast-registration')
     steps:
+      - uses: actions/checkout@v6
+
       - name: Notify processing started
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh issue comment ${{ github.event.issue.number }} --body "獣の名が書庫に刻まれた。審査が始まる。"
-
-      - uses: actions/checkout@v6
 
       - uses: actions/setup-node@v6
         with:
