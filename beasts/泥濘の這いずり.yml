@@ -1,0 +1,19 @@
+name: 泥濘の這いずり
+species: 沼棲み
+binder: sano-suguru
+origin: 西部湿地帯の底なし沼より引き揚げ
+lore: 戦場から逃げ延びた脱走兵が沼に沈み、恐怖と泥に飲まれて変容した。人の形を留めぬ肉塊となり、沼を通る者を引きずり込む。
+traits:
+  - 泥と腐肉が混じり合った不定形の体
+  - 地面に潜み、足元から襲う
+  - 斬っても突いても再び繋がる
+skills:
+  - name: 泥濘の腕
+    description: 地中から無数の腕を伸ばし、獲物の足を掴む
+  - name: 沼の抱擁
+    description: 体全体で獲物を包み込み、窒息させる
+status: alive
+arena: local
+wins: 0
+losses: 0
+pr_number: 40
