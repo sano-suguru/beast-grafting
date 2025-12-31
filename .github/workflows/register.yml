@@ -69,6 +69,14 @@ jobs:
         run: |
           npx tsx src/workflows/register-cli.ts
 
+      - name: Generate PR body
+        id: pr-body
+        env:
+          BEAST_FILE: beasts/${{ steps.parse.outputs.name }}.yml
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          BINDER: ${{ github.event.issue.user.login }}
+        run: npx tsx src/workflows/pr-body-cli.ts
+
       - name: Create PR
         id: create-pr
         env:
@@ -77,6 +85,7 @@ jobs:
           BEAST_NAME="${{ steps.parse.outputs.name }}"
           ISSUE_NUMBER="${{ github.event.issue.number }}"
           BRANCH="beast/issue-${ISSUE_NUMBER}"
+          BEAST_FILE="beasts/${BEAST_NAME}.yml"
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -87,44 +96,11 @@ jobs:
           git push origin "$BRANCH"
 
           echo "branch=$BRANCH" >> $GITHUB_OUTPUT
-
-          # 生成された魔獣YAMLを読み取ってPR本文を作成
-          BEAST_FILE=$(find beasts -name "*.yml" -newer .git/index | head -1)
-
-          # YAMLから値を抽出
-          BEAST_NAME_VAL=$(grep '^name:' "$BEAST_FILE" | sed 's/^name: *//')
-          SPECIES=$(grep '^species:' "$BEAST_FILE" | sed 's/^species: *//')
-          ORIGIN=$(grep '^origin:' "$BEAST_FILE" | sed 's/^origin: *//')
-          LORE=$(grep '^lore:' "$BEAST_FILE" | sed 's/^lore: *//')
-
-          # traitsを抽出（配列）
-          TRAITS=$(awk '/^traits:/{flag=1; next} /^[a-z]/{flag=0} flag && /^  - /{gsub(/^  - /,""); print "- " $0}' "$BEAST_FILE")
-
-          # skillsを抽出（name: とdescription: のペア）
-          SKILLS=$(awk '/^skills:/{flag=1; next} /^[a-z]/{flag=0} flag && /name:/{gsub(/.*name: /,""); name=$0} flag && /description:/{gsub(/.*description: /,""); print "- **" name "**: " $0}' "$BEAST_FILE")
-
-          PR_BODY="獣の名が書庫に刻まれた。
-
-          **登録依頼**: #${ISSUE_NUMBER}
-          **獣使い**: @${{ github.event.issue.user.login }}
-
-          ---
-
-          **名**: ${BEAST_NAME_VAL}
-          **種**: ${SPECIES}
-          **出自**: ${ORIGIN}
-
-          > ${LORE}
-
-          **特性**
-          ${TRAITS}
-
-          **技**
-          ${SKILLS}"
+          echo "beast_file=$BEAST_FILE" >> $GITHUB_OUTPUT
 
           PR_URL=$(gh pr create \
             --title "新魔獣「${BEAST_NAME}」登録" \
-            --body "$PR_BODY" \
+            --body "${{ steps.pr-body.outputs.pr_body }}" \
             --base main \
             --head "$BRANCH")
           echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
@@ -135,9 +111,8 @@ jobs:
 
       - name: Add PR number to beast YAML
         run: |
-          BEAST_NAME="${{ steps.parse.outputs.name }}"
-          BEAST_FILE=$(find beasts -name "*.yml" -newer .git/index | head -1)
-          if [ -n "$BEAST_FILE" ]; then
+          BEAST_FILE="${{ steps.create-pr.outputs.beast_file }}"
+          if [ -n "$BEAST_FILE" ] && [ -f "$BEAST_FILE" ]; then
             echo "pr_number: ${{ steps.create-pr.outputs.pr_number }}" >> "$BEAST_FILE"
             git add "$BEAST_FILE"
             git commit --amend --no-edit
