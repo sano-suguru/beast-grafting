@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { generateText } from "ai";
-import { err, ok, ResultAsync, type Result } from "neverthrow";
+import { err, ok, Result, ResultAsync } from "neverthrow";
 import {
 	type AppError,
 	aiGenerationError,
@@ -17,6 +17,51 @@ import {
 } from "../lib/index.js";
 import type { BattleLog, Beast } from "../schemas/index.js";
 import { processDeath } from "./death.js";
+
+/**
+ * AIの出力からJSON部分を抽出する
+ * 複数のパターンに対応:
+ * 1. ```json ... ``` (コードブロック)
+ * 2. ``` ... ``` (言語指定なしコードブロック)
+ * 3. { ... } (直接JSON)
+ */
+function extractJson(text: string): string | null {
+	// パターン1: ```json ... ```
+	const jsonBlockMatch = text.match(/```json\s*([\s\S]*?)\s*```/);
+	if (jsonBlockMatch?.[1]) {
+		return jsonBlockMatch[1].trim();
+	}
+
+	// パターン2: ``` ... ``` (言語指定なし)
+	const codeBlockMatch = text.match(/```\s*([\s\S]*?)\s*```/);
+	if (codeBlockMatch?.[1]) {
+		const content = codeBlockMatch[1].trim();
+		if (content.startsWith("{")) {
+			return content;
+		}
+	}
+
+	// パターン3: 直接JSONオブジェクト
+	const jsonObjectMatch = text.match(
+		/\{[\s\S]*"narrative"[\s\S]*"victor"[\s\S]*\}/,
+	);
+	if (jsonObjectMatch?.[0]) {
+		return jsonObjectMatch[0];
+	}
+
+	return null;
+}
+
+/**
+ * 安全なJSONパース（Result型で返す）
+ */
+function safeJsonParse<T>(text: string): Result<T, string> {
+	const parse = Result.fromThrowable(
+		(json: string) => JSON.parse(json) as T,
+		(error) => (error instanceof Error ? error.message : "Unknown parse error"),
+	);
+	return parse(text);
+}
 
 /**
  * バトル結果
@@ -103,19 +148,31 @@ export async function executeBattle(
 	}
 	const text = textResult.value.text;
 
-	// JSONを抽出してパース
-	const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/);
-	if (!jsonMatch?.[1]) {
-		return err(aiGenerationError("AIの出力からJSONを抽出できませんでした"));
+	// JSONを抽出してパース（複数パターンに対応）
+	const jsonContent = extractJson(text);
+	if (!jsonContent) {
+		// デバッグ用：AIの出力を含めてエラー
+		const preview = text.slice(0, 500);
+		return err(
+			aiGenerationError(
+				`AIの出力からJSONを抽出できませんでした。出力の先頭: ${preview}`,
+			),
+		);
 	}
 
-	const result = JSON.parse(jsonMatch[1]) as {
+	const parseResult = safeJsonParse<{
 		narrative: string;
 		victor: string;
 		death: boolean;
 		deceased: string | null;
 		death_reason: string | null;
-	};
+	}>(jsonContent);
+
+	if (parseResult.isErr()) {
+		return err(aiGenerationError(`JSONのパースに失敗: ${parseResult.error}`));
+	}
+
+	const result = parseResult.value;
 
 	// 勝者・敗者を特定
 	const winner = result.victor === beastA.name ? beastA : beastB;
