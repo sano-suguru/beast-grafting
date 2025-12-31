@@ -31,7 +31,7 @@ jobs:
 
       - name: Parse issue form
         id: parse
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const body = context.payload.issue.body;
