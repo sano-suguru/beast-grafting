@@ -88,9 +88,43 @@ jobs:
 
           echo "branch=$BRANCH" >> $GITHUB_OUTPUT
 
+          # 生成された魔獣YAMLを読み取ってPR本文を作成
+          BEAST_FILE=$(find beasts -name "*.yml" -newer .git/index | head -1)
+
+          # YAMLから値を抽出
+          BEAST_NAME_VAL=$(grep '^name:' "$BEAST_FILE" | sed 's/^name: *//')
+          SPECIES=$(grep '^species:' "$BEAST_FILE" | sed 's/^species: *//')
+          ORIGIN=$(grep '^origin:' "$BEAST_FILE" | sed 's/^origin: *//')
+          LORE=$(grep '^lore:' "$BEAST_FILE" | sed 's/^lore: *//')
+
+          # traitsを抽出（配列）
+          TRAITS=$(awk '/^traits:/{flag=1; next} /^[a-z]/{flag=0} flag && /^  - /{gsub(/^  - /,""); print "- " $0}' "$BEAST_FILE")
+
+          # skillsを抽出（name: とdescription: のペア）
+          SKILLS=$(awk '/^skills:/{flag=1; next} /^[a-z]/{flag=0} flag && /name:/{gsub(/.*name: /,""); name=$0} flag && /description:/{gsub(/.*description: /,""); print "- **" name "**: " $0}' "$BEAST_FILE")
+
+          PR_BODY="獣の名が書庫に刻まれた。
+
+          **登録依頼**: #${ISSUE_NUMBER}
+          **獣使い**: @${{ github.event.issue.user.login }}
+
+          ---
+
+          **名**: ${BEAST_NAME_VAL}
+          **種**: ${SPECIES}
+          **出自**: ${ORIGIN}
+
+          > ${LORE}
+
+          **特性**
+          ${TRAITS}
+
+          **技**
+          ${SKILLS}"
+
           PR_URL=$(gh pr create \
             --title "新魔獣「${BEAST_NAME}」登録" \
-            --body "Issue #${ISSUE_NUMBER} からの登録\n\n獣使い: @${{ github.event.issue.user.login }}" \
+            --body "$PR_BODY" \
             --base main \
             --head "$BRANCH")
           echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
