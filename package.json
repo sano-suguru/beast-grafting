@@ -22,9 +22,9 @@
 	"description": "GitHub Issueで魔獣を登録し、AIが闘技場でバトルを生成するヘッドレスゲーム",
 	"type": "module",
 	"dependencies": {
-		"@ai-sdk/openai": "^3.0.1",
-		"@ai-sdk/openai-compatible": "^2.0.1",
-		"ai": "^6.0.3",
+		"@ai-sdk/openai": "^3.0.6",
+		"@ai-sdk/openai-compatible": "^2.0.4",
+		"ai": "^6.0.13",
 		"gray-matter": "^4.0.3",
 		"neverthrow": "^8.2.0",
 		"yaml": "^2.8.2",
